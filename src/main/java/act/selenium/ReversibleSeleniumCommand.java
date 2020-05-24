@@ -1,10 +1,10 @@
-package act.view.excel;
+package act.selenium;
 
 /*-
  * #%L
- * ACT Excel
+ * ACT Selenium
  * %%
- * Copyright (C) 2015 - 2017 ActFramework
+ * Copyright (C) 2020 ActFramework
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,18 @@ package act.view.excel;
  * #L%
  */
 
-import org.junit.Test;
-import osgl.ut.TestBase;
+import act.selenium.command.NegateCommand;
+import act.test.util.ReversibleLogic;
 
-public class VersionTest extends TestBase {
-
-    @Test
-    public void versionShallContainExcel() {
-        yes(ExcelView.VERSION.toString().contains("excel"));
+public abstract class ReversibleSeleniumCommand<T extends ReversibleSeleniumCommand>
+        extends SeleniumCommand
+        implements ReversibleLogic<T>
+{
+    @Override
+    public T reversed() {
+        if (this instanceof NegateCommand) {
+            return (T) ((NegateCommand) this).c;
+        }
+        return (T)new NegateCommand(this);
     }
-
 }

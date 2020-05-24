@@ -35,11 +35,13 @@
   <parent>
     <groupId>org.actframework</groupId>
     <artifactId>parent</artifactId>
-    <version>1.8.32</version>
+    <version>1.8.33-SNAPSHOT</version>
   </parent>
 
   <properties>
     <scm.url>git@github.com:actframework/act-selenium.git</scm.url>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <selenium.version>3.141.59</selenium.version>
   </properties>
 
@@ -52,9 +54,21 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.actframework</groupId>
+      <artifactId>act</artifactId>
+      <version>1.8.33-te-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
       <version>${selenium.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>22.0</version>
     </dependency>
 
   </dependencies>
