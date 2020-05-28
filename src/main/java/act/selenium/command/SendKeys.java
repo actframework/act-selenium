@@ -26,38 +26,39 @@ import act.test.Scenario;
 import act.test.TestSession;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.osgl.$;
 import org.osgl.util.E;
-import org.osgl.util.S;
 
-import java.util.List;
+import java.util.Map;
 
-/**
- * Select specific element(s) and store then into the scenario cache
- */
-public class Select extends SeleniumCommand {
+public class SendKeys extends SeleniumCommand {
 
-    private By by;
+    protected By by;
+    private String keys;
 
     @Override
     public void init(Object param) {
-        String selector = S.string(param);
-        E.invalidConfigurationIf(S.isBlank(selector), "selector required");
-        by = new ByJQuery(selector);
+        E.unexpectedIf(null == param, "keys expected");
+        if (param instanceof String) {
+            keys = param.toString();
+        } else if (param instanceof Map) {
+            Map map = (Map) param;
+            Object o = map.get("target");
+            if (null != o) {
+                String target = o.toString();
+                by = new ByJQuery(target);
+            }
+            o = map.get("keys");
+            if (null != o) {
+                keys = o.toString();
+            }
+        }
     }
 
     @Override
     public boolean run(TestSession session, Scenario scenario) throws Exception {
-        List<WebElement> selected = select(by, session);
-        if ($.not(selected)) {
-            return false;
-        }
-        selectElements(selected, session);
+        WebElement selected = null != by ? selectOne(by, session) : selectedElement(session);
+        E.illegalStateIf(null == selected, "No input selected");
+        selected.sendKeys(keys);
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return S.concat("select [", by, "]");
     }
 }

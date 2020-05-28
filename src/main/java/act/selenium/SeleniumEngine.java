@@ -34,8 +34,10 @@ import org.osgl.util.S;
 
 import javax.validation.ValidationException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static act.selenium.SeleniumCommand.KEY_DRIVER;
 
@@ -48,6 +50,8 @@ public class SeleniumEngine implements TestEngine {
 
     @Configuration("test.selenium.port")
     private int defaultPort;
+
+    private Set<WebDriver> drivers = new HashSet<>();
 
     @Override
     public String getName() {
@@ -116,20 +120,31 @@ public class SeleniumEngine implements TestEngine {
 
     @Override
     public void setupSession(TestSession session) {
-        WebDriver driver = createDriver();
-        session.constants.put(KEY_DRIVER, driver);
+        WebDriver driver = (WebDriver) session.constants.get(KEY_DRIVER);
+        if (null == driver) {
+            driver = createDriver();
+            session.constants.put(KEY_DRIVER, driver);
+        }
     }
 
     @Override
     public void teardownSession(TestSession session) {
-        WebDriver driver = (WebDriver) session.constants.get(KEY_DRIVER);
-        driver.quit();
+    }
+
+    @Override
+    public void teardown() {
+        for (WebDriver driver: drivers) {
+            driver.quit();
+        }
+        drivers.clear();
     }
 
     private WebDriver createDriver() {
         ChromeOptions options = new ChromeOptions();
         //options.addArguments("headless");
-        return new ChromeDriver(options);
+        WebDriver driver = new ChromeDriver(options);
+        drivers.add(driver);
+        return driver;
     }
 
 }

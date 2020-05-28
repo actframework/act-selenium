@@ -35,8 +35,9 @@ public class ByJQuery extends By implements Serializable {
 
     public ByJQuery(String selector) {
         $.requireNotNull(selector, "Cannot find elements with a null JQuery expression.");
+        char q = selector.contains("'") ? '"' : '\'';
         if (!(selector.startsWith("$(") || selector.startsWith("jQuery("))) {
-            selector = S.concat("$(", selector, ")");
+            selector = S.concat("$(", q, selector, q, ")");
         }
         this.selector = selector;
     }
@@ -100,6 +101,6 @@ public class ByJQuery extends By implements Serializable {
 
     @Override
     public String toString() {
-        return "By.jQuery: \"$(" + selector + ")\"";
+        return "By.jQuery: " + selector;
     }
 }
